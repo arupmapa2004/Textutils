@@ -43,7 +43,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Textform mode={mode} showAlert={showAlert}/>}/>
             <Route path="/about" element={<About mode={mode}/>}/>
-            <Route path="/timer" element={<Stopwatch mode={mode} showAlert={showAlert}/>}/>
+            <Route path="/timer" element={<Stopwatch mode={mode} showAlert={showAlert} toast={toast}/>}/>
           </Routes>
         </div>
       </BrowserRouter>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Stopwatch(props) {
     const [inputValue, setInputValue] = useState("");
@@ -23,44 +24,51 @@ export default function Stopwatch(props) {
 
         if (remain <= 0) {
             clearInterval(intervalId);
-            props.showAlert("Time is Up!","danger");
+            props.showAlert("Time is Up!", "danger");
         }
         else {
             --remain;
         }
     }
-    const startTime = ()=>{
-        let Time = inputValue;
-        totalTime = Time * 60;
-        remain = totalTime;
-        clearInterval(intervalId);
-        setintervalId(setInterval(start, 1000));
+    const startTime = () => {
+        
+        let Time = Number(inputValue);
+        if (!isNaN(Time)) {
+            totalTime = Time * 60;
+            remain = totalTime;
+            clearInterval(intervalId);
+            setintervalId(setInterval(start, 1000));
+        }
+        else{
+            console.log(typeof inputValue);
+            toast.error("Please Enter Only Digits");
+        }
     }
-    const pauseTime = ()=>{
+    const pauseTime = () => {
         clearInterval(intervalId);
     }
-    const resetTime = ()=>{
+    const resetTime = () => {
         if (intervalId) {
             clearInterval(intervalId);
         }
         remain = totalTime;
         progress = 0;
         setProgWidth("0%");
-
         setTime("0:0");
+        setInputValue('');
     }
     return (
         <>
             <div className="container mb-3">
                 <div className="progress my-3" role="progressbar" aria-label="Animated striped example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-                    <div className="progress-bar progress-bar-striped progress-bar-animated" style={{width: progWidth }}></div>
+                    <div className="progress-bar progress-bar-striped progress-bar-animated" style={{ width: progWidth }}></div>
                 </div>
                 <div className="container my-3">
                     <div className="container my-3">
-                        <h5>{time}</h5>
+                        <h5 style={{ color: props.mode === 'Dark' ? 'black' : 'white' }}>{time}</h5>
                     </div>
                     <div className="container my-3">
-                        <h5>Enter Your Time Here</h5>
+                        <h5 style={{ color: props.mode === 'Dark' ? 'black' : 'white' }}>Enter Your Time Here</h5>
                         <input type="text" value={inputValue} onChange={handleOnChage} style={{ border: "2px solid blue", borderRadius: "7px" }} />
                     </div>
                 </div>
