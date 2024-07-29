@@ -4,20 +4,19 @@ export default function Stopwatch(props) {
     const [inputValue, setInputValue] = useState("");
     let [time, setTime] = useState("0:0");
     let [progWidth, setProgWidth] = useState("0");
+    let [intervalId, setintervalId] = useState(null);
+
     const handleOnChage = (event) => {
         setInputValue(event.target.value);
     }
 
     let totalTime;
-    let intervalId;
     let remain;
     let progress;
     function start() {
-        //console.log(remain);
         let minutes = Math.floor(remain / 60);
         let seconds = Math.floor(remain % 60);
         setTime(`${minutes}:${seconds}`);
-
         progress = (1 - remain / totalTime) * 100;
         setProgWidth(`${progress}%`);
 
@@ -25,7 +24,6 @@ export default function Stopwatch(props) {
         if (remain <= 0) {
             clearInterval(intervalId);
             props.showAlert("Time is Up!","danger");
-            //setTime("Time is Up!");
         }
         else {
             --remain;
@@ -36,16 +34,19 @@ export default function Stopwatch(props) {
         totalTime = Time * 60;
         remain = totalTime;
         clearInterval(intervalId);
-        intervalId = setInterval(start, 1000);
+        setintervalId(setInterval(start, 1000));
     }
     const pauseTime = ()=>{
         clearInterval(intervalId);
     }
     const resetTime = ()=>{
-        clearInterval(intervalId);
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
         remain = totalTime;
         progress = 0;
         setProgWidth("0%");
+
         setTime("0:0");
     }
     return (
