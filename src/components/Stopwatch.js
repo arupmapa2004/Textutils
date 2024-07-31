@@ -40,7 +40,6 @@ export default function Stopwatch(props) {
             setintervalId(setInterval(start, 1000));
         }
         else{
-            console.log(typeof inputValue);
             toast.error("Please Enter Only Digits");
         }
     }
