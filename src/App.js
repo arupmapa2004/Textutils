@@ -29,7 +29,7 @@ function App() {
       <div className="container my-3">
         <Routes>
           <Route path="/" element={<Textform mode={mode} toast={toast} />} />
-          <Route path="/about" element={<About mode={mode} />} />
+          <Route path="/about" element={<About mode={mode}/>} />
           <Route path="/timer" element={<Stopwatch mode={mode} toast={toast} />} />
         </Routes>
       </div>

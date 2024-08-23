@@ -1,56 +1,64 @@
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
 export default function Stopwatch(props) {
     const [inputValue, setInputValue] = useState("");
-    let [time, setTime] = useState("0:0");
-    let [progWidth, setProgWidth] = useState("0");
-    let [intervalId, setintervalId] = useState(null);
+    const [time, setTime] = useState("0:0");
+    const [progWidth, setProgWidth] = useState("0%");
+    const [intervalId, setIntervalId] = useState(null);
+    const [remain, setRemain] = useState(0);
+    const [totalTime, setTotalTime] = useState(0);
 
-    const handleOnChage = (event) => {
+    const handleOnChange = (event) => {
         setInputValue(event.target.value);
     }
 
-    let totalTime;
-    let remain;
     let progress;
-    function start() {
+    const start = () => {
+        console.log(remain);
         let minutes = Math.floor(remain / 60);
         let seconds = Math.floor(remain % 60);
+        console.log(minutes);
+        console.log(seconds);
         setTime(`${minutes}:${seconds}`);
         progress = (1 - remain / totalTime) * 100;
+        console.log(progress);
         setProgWidth(`${progress}%`);
-
-
+        //console.log(remain)
         if (remain <= 0) {
+            props.toast.error("Time is Up!");
             clearInterval(intervalId);
-            props.showAlert("Time is Up!", "danger");
-        }
-        else {
-            --remain;
+        } else {
+            console.log("come here")
+            setRemain(remain-1);
         }
     }
+
     const startTime = () => {
-        
-        let Time = Number(inputValue);
+        const Time = parseFloat(inputValue);
         if (!isNaN(Time)) {
-            totalTime = Time * 60;
-            remain = totalTime;
+            const totalSeconds = Time * 60;
+            //console.log(totalSeconds);
+            setTotalTime(totalSeconds);
+            setRemain(totalSeconds);
             clearInterval(intervalId);
-            setintervalId(setInterval(start, 1000));
-        }
-        else{
-            toast.error("Please Enter Only Digits");
+            //console.log(totalSeconds);
+            //console.log(remain);
+            const newIntervalId = setInterval(start, 2000);
+            setIntervalId(newIntervalId);
+        } else {
+            props.toast.error("Please Enter Only Digits");
         }
     }
+
     const pauseTime = () => {
         clearInterval(intervalId);
     }
+
     const resetTime = () => {
         if (intervalId) {
             clearInterval(intervalId);
         }
-        remain = totalTime;
+        setRemain(totalTime);
         progress = 0;
         setProgWidth("0%");
         setTime("0:0");
@@ -68,7 +76,7 @@ export default function Stopwatch(props) {
                     </div>
                     <div className="container my-3">
                         <h5 style={{ color: props.mode === 'Dark' ? 'black' : 'white' }}>Enter Your Time Here</h5>
-                        <input type="text" value={inputValue} onChange={handleOnChage} style={{ border: "2px solid blue", borderRadius: "7px" }} />
+                        <input type="text" value={inputValue} onChange={handleOnChange} style={{ border: "2px solid blue", borderRadius: "7px" }} />
                     </div>
                 </div>
                 <div className="container my-3">
