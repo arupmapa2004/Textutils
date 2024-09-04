@@ -28,7 +28,6 @@ export default function Stopwatch(props) {
             props.toast.error("Time is Up!");
             clearInterval(intervalId);
         } else {
-            console.log("come here")
             setRemain(remain-1);
         }
     }
