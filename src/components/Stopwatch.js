@@ -1,34 +1,31 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 export default function Stopwatch(props) {
     const [inputValue, setInputValue] = useState("");
     const [time, setTime] = useState("0:0");
     const [progWidth, setProgWidth] = useState("0%");
-    const [intervalId, setIntervalId] = useState(null);
-    const [remain, setRemain] = useState(0);
-    const [totalTime, setTotalTime] = useState(0);
+    const intervalID = useRef(null);
+    const remain = useRef(0);
+    const totalTime = useRef(0);
 
     const handleOnChange = (event) => {
         setInputValue(event.target.value);
     }
 
-    let progress;
     const start = () => {
-        console.log(remain);
-        let minutes = Math.floor(remain / 60);
-        let seconds = Math.floor(remain % 60);
-        console.log(minutes);
-        console.log(seconds);
+        let minutes = Math.floor(remain.current / 60);
+        let seconds = Math.floor(remain.current % 60);
         setTime(`${minutes}:${seconds}`);
-        progress = (1 - remain / totalTime) * 100;
-        console.log(progress);
+
+        const progress = (1 - remain.current / totalTime.current) * 100;
         setProgWidth(`${progress}%`);
-        //console.log(remain)
-        if (remain <= 0) {
+
+        if (remain.current <= 0) {
             props.toast.error("Time is Up!");
-            clearInterval(intervalId);
+            clearInterval(intervalID.current); // stop the interval
+            intervalID.current = null;
         } else {
-            setRemain(remain-1);
+            remain.current = remain.current - 1;
         }
     }
 
@@ -36,29 +33,32 @@ export default function Stopwatch(props) {
         const Time = parseFloat(inputValue);
         if (!isNaN(Time)) {
             const totalSeconds = Time * 60;
-            //console.log(totalSeconds);
-            setTotalTime(totalSeconds);
-            setRemain(totalSeconds);
-            clearInterval(intervalId);
-            //console.log(totalSeconds);
-            //console.log(remain);
-            const newIntervalId = setInterval(start, 2000);
-            setIntervalId(newIntervalId);
+            totalTime.current = totalSeconds;
+            remain.current = totalSeconds;
+
+            if (intervalID.current) {
+                clearInterval(intervalID.current); // Clear any existing interval
+            }
+
+            intervalID.current = setInterval(start, 1000); // Adjusted to 1000ms (1 second)
         } else {
             props.toast.error("Please Enter Only Digits");
         }
     }
 
     const pauseTime = () => {
-        clearInterval(intervalId);
+        if (intervalID.current) {
+            clearInterval(intervalID.current);
+            intervalID.current = null;
+        }
     }
 
     const resetTime = () => {
-        if (intervalId) {
-            clearInterval(intervalId);
+        if (intervalID.current) {
+            clearInterval(intervalID.current);
+            intervalID.current = null;
         }
-        setRemain(totalTime);
-        progress = 0;
+        remain.current = totalTime.current = 0;
         setProgWidth("0%");
         setTime("0:0");
         setInputValue('');
